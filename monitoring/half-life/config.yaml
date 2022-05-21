@@ -1,0 +1,28 @@
+alerts:
+  ignore-alerts:
+  - alertTypeMissedRecentBlocks
+notifications:
+  service: discord
+  discord:
+    webhook:
+      id: $DISCORD_WEBHOOK_ID
+      token: $DISCORD_WEBHOOK_TOKEN
+    alert-user-ids:
+      - de_husk
+      - elsehow
+    username: HalfLife
+validators:
+- name: elsehow - Juno
+  rpc: https://rpc-juno.itastakers.com:443
+  address: junovalcons13zd7yjxcefek2knphfyv7h4mespkmsvrfr8muw
+  chain-id: juno-1
+  discord-status-message-id: "977361808803381278"
+  rpc-retries: 20
+  sentries: null
+- name: elsehow - Stargaze
+  rpc: https://rpc.stargaze-apis.com:443
+  address: starsvalcons198nlhwqvc3sd3yj5h0xver82cx7600rssrwahh
+  chain-id: stargaze-1
+  discord-status-message-id: "977361838457094224"
+  rpc-retries: 20
+  sentries: null

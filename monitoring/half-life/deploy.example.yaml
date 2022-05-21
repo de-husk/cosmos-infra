@@ -1,0 +1,46 @@
+---
+version: "2.0"
+
+services:
+  halflife:
+    image: samangan/half-life
+    expose:
+      # NOTE: I added this because it was saying: 
+      # `Error while sending manifest to provider. Status code was not success (422) : invalid manifest: zero global services`
+      # with current Akash you need a global entrypoint (even if nothing is listening on it)
+      - port: 8081
+        as: 8081
+        to:
+          - global: true
+    env:
+      - DISCORD_WEBHOOK_ID=discord_id
+      - DISCORD_WEBHOOK_TOKEN=discord_token
+
+profiles:
+  compute:
+    halflife:
+      resources:
+        cpu:
+          units: 0.5
+        memory:
+          size: 100Mi
+        storage:
+          size: 512Mi
+
+  placement:
+    akash:
+      attributes:
+        host: akash
+      signedBy:
+        anyOf:
+          - "akash1365yvmc4s7awdyj3n2sav7xfx76adc6dnmlx63"
+      pricing:
+        halflife:
+          denom: uakt
+          amount: 100
+
+deployment:
+  halflife:
+    akash:
+      profile: halflife
+      count: 1
