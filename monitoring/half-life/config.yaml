@@ -8,8 +8,8 @@ notifications:
       id: $DISCORD_WEBHOOK_ID
       token: $DISCORD_WEBHOOK_TOKEN
     alert-user-ids:
-      - de_husk
-      - elsehow
+      - 648723082776805376
+      - 755585146140491956
     username: HalfLife
 validators:
 - name: elsehow - Juno

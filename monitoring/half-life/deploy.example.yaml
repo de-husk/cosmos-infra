@@ -3,7 +3,7 @@ version: "2.0"
 
 services:
   halflife:
-    image: samangan/half-life:v7
+    image: samangan/half-life:v9
     expose:
       # NOTE: I added this because it was saying: 
       # `Error while sending manifest to provider. Status code was not success (422) : invalid manifest: zero global services`
