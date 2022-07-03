@@ -1,0 +1,186 @@
+---
+version: "2.0"
+
+services:
+  # NOTE: We have to repeat each rpc node into it's own service because Akash doesnt support sidecar containers.
+  # Which means to scrape prom metrics for each RPC node we need to expose each rpc node internally to the prom scraper service.
+  # Since we don't want to have to individually manage / expose N public facing RPC node IPs we are also fronting all the RPC nodes with nginx here.
+  
+  ### RPC NODES ###
+  rpc-node-1:
+    image: ghcr.io/ovrclk/cosmos-omnibus:v0.2.2-juno-v6.0.0
+    env:
+      - MONIKER=de-husk
+      - CHAIN_JSON=https://raw.githubusercontent.com/cosmos/chain-registry/master/juno/chain.json
+      - P2P_POLKACHU=1
+      - SNAPSHOT_POLKACHU=1
+      - MINIMUM_GAS_PRICES=0.0025ujuno
+      - JUNOD_INSTRUMENTATION_PROMETHEUS=true
+    expose:
+      - port: 26657
+        to: 
+          - service: nginx
+      - port: 26660
+        to:
+          - service: prom
+      # NOTE: Akash currently expects every service to have a globally exposed port, so we are mapping it to a dummy port
+      - port: 8081
+        as: 8081
+        to:
+          - global: true
+  rpc-node-2:
+    image: ghcr.io/ovrclk/cosmos-omnibus:v0.2.2-juno-v6.0.0
+    env:
+      - MONIKER=de-husk
+      - CHAIN_JSON=https://raw.githubusercontent.com/cosmos/chain-registry/master/juno/chain.json
+      - P2P_POLKACHU=1
+      - SNAPSHOT_POLKACHU=1
+      - MINIMUM_GAS_PRICES=0.0025ujuno
+      - JUNOD_INSTRUMENTATION_PROMETHEUS=true
+    expose:
+      - port: 26657
+        to: 
+          - service: nginx
+      - port: 26660
+        to:
+          - service: prom
+      - port: 8081
+        as: 8081
+        to:
+          - global: true
+
+  nginx:
+    image: samangan/nginx-dynamic-lb:v1
+    env:
+      - HOST={myhost.com}
+      - HOSTS=rpc-node-1:26657,rpc-node-2:26657
+    depends_on:
+      - rpc-node-1
+      - rpc-node-2
+    expose:
+      - port: 80
+        accept:
+          - "{myhost.com}"
+        to:
+          - global: true
+
+  prom:
+    image: samangan/prometheus:v6
+    env:
+      # TODO:Change these variables to be agnostic instead of grafana cloud specific names
+      - GRAFANA_CLOUD_ID={grafana_cloud_id}
+      - GRAFANA_CLOUD_PASSWORD={grafana_cloud_password}
+      - GRAFANA_CLOUD_URL={grafana_cloud_url}
+      - PROM_ENDPOINTS=rpc-node-1:26660,rpc-node-2:26660,cloudflare-prom-exporter:26660
+    depends_on:
+      - rpc-node-1
+      - rpc-node-2
+      - cloudflare-prom-exporter
+    expose:
+      - port: 8081
+        as: 8081
+        to:
+          - global: true
+
+  cloudflare-prom-exporter:
+    image: ghcr.io/lablabs/cloudflare_exporter
+    env:
+      - CF_API_TOKEN={cf_token}
+      - CF_ZONES={cf_zone_ids}
+      - LISTEN=:26660
+      - METRICS_PATH=/
+    expose:
+      - port: 8081
+        as: 8081
+        to:
+          - global: true
+      - port: 26660
+        to:
+          - service: prom
+
+profiles:
+  compute:
+    rpc-node-1:
+      resources:
+        cpu:
+          units: 4
+        memory:
+          size: 8Gi
+        storage:
+          size: 100Gi
+    rpc-node-2:
+      resources:
+        cpu:
+          units: 4
+        memory:
+          size: 8Gi
+        storage:
+          size: 100Gi
+    nginx:
+      resources:
+        cpu:
+          units: 1
+        memory:
+          size: 2Gi
+        storage:
+          size: 0.5Gi
+    prom:
+      resources:
+        cpu:
+          units: 0.5
+        memory:
+          size: 100Mi
+        storage:
+          size: 512Mi
+    cloudflare-prom-exporter:
+      resources:
+        cpu:
+          units: 0.5
+        memory:
+          size: 100Mi
+        storage:
+          size: 512Mi
+  placement:
+    akash:
+      attributes:
+        host: akash
+      signedBy:
+        anyOf:
+          - akash1365yvmc4s7awdyj3n2sav7xfx76adc6dnmlx63
+      pricing:
+        rpc-node-1:
+          denom: uakt
+          amount: 500
+        rpc-node-2:
+          denom: uakt
+          amount: 500
+        nginx:
+          denom: uakt
+          amount: 500
+        prom:
+          denom: uakt
+          amount: 500
+        cloudflare-prom-exporter:
+          denom: uakt
+          amount: 500
+deployment:
+  rpc-node-1:
+    akash:
+      profile: rpc-node-1
+      count: 1
+  rpc-node-2:
+    akash:
+      profile: rpc-node-2
+      count: 1
+  nginx:
+    akash:
+      profile: nginx
+      count: 2
+  prom:
+    akash:
+      profile: prom
+      count: 1
+  cloudflare-prom-exporter:
+    akash:
+      profile: cloudflare-prom-exporter
+      count: 1

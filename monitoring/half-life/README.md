@@ -1,7 +1,7 @@
 # Deploying Half-Life on Akash
 
 
-# Deploy Steps
+## Deploy Steps
 * docker build . -t samangan/half-life:v1 --platform=linux/amd64
 * docker push samangan/half-life:v1
 * cp deploy.example.yaml deploy.yaml
