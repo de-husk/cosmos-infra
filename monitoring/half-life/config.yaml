@@ -13,7 +13,7 @@ notifications:
     username: HalfLife
 validators:
 - name: elsehow - Juno
-  rpc: https://rpc-juno.itastakers.com:443
+  rpc: https://juno.dehusk.xyz:443
   address: junovalcons13zd7yjxcefek2knphfyv7h4mespkmsvrfr8muw
   chain-id: juno-1
   discord-status-message-id: "977361808803381278"
