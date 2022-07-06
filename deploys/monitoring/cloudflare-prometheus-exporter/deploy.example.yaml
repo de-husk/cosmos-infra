@@ -1,0 +1,77 @@
+---
+version: "2.0"
+
+services:
+  prom:
+    image: samangan/prometheus:v6
+    env:
+      # TODO:Change these variables to be agnostic instead of grafana cloud specific names
+      - GRAFANA_CLOUD_ID={grafana_cloud_id}
+      - GRAFANA_CLOUD_PASSWORD={grafana_cloud_password}
+      - GRAFANA_CLOUD_URL={grafana_cloud_url}
+      - PROM_ENDPOINTS=cloudflare-prom-exporter:26660
+    depends_on:
+      - cloudflare-prom-exporter
+    expose:
+      - port: 8081
+        as: 8081
+        to:
+          - global: true
+
+  cloudflare-prom-exporter:
+    image: ghcr.io/lablabs/cloudflare_exporter
+    env:
+      - CF_API_TOKEN={cf_token}
+      - CF_ZONES={cf_zone_ids}
+      - LISTEN=:26660
+      - METRICS_PATH=/
+    expose:
+      - port: 8081
+        as: 8081
+        to:
+          - global: true
+      - port: 26660
+        to:
+          - service: prom
+
+profiles:
+  compute:
+    prom:
+      resources:
+        cpu:
+          units: 0.5
+        memory:
+          size: 100Mi
+        storage:
+          size: 512Mi
+    cloudflare-prom-exporter:
+      resources:
+        cpu:
+          units: 0.5
+        memory:
+          size: 100Mi
+        storage:
+          size: 512Mi
+  placement:
+    akash:
+      attributes:
+        host: akash
+      signedBy:
+        anyOf:
+          - akash1365yvmc4s7awdyj3n2sav7xfx76adc6dnmlx63
+      pricing:
+        prom:
+          denom: uakt
+          amount: 500
+        cloudflare-prom-exporter:
+          denom: uakt
+          amount: 500
+deployment:
+  prom:
+    akash:
+      profile: prom
+      count: 1
+  cloudflare-prom-exporter:
+    akash:
+      profile: cloudflare-prom-exporter
+      count: 1
