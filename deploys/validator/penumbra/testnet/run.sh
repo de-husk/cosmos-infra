@@ -41,7 +41,7 @@ if [ -n "$KEY_PATH" ]; then
   tar xvf $CONFIG_PATH/$FILE_NAME 
 else
   echo "generating new penumbra testnet config"
-  pd testnet join  --testnet-dir $CONFIG_PATH/testnet_data
+  pd testnet --testnet-dir $CONFIG_PATH/testnet_data join
 fi
 
 # NOTE: if tendermint dies here, the k8s pod should be unhealthy and restart

@@ -50,7 +50,7 @@ services:
           - global: true
 
   nginx:
-    image: samangan/nginx-dynamic-lb:v1
+    image: samangan/nginx-dynamic-lb:v1 # TODO: Move over to the original image since I dont need it
     env:
       - HOST={myhost.com}
       - HOSTS=rpc-node-1:26657,rpc-node-2:26657

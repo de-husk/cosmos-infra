@@ -1,7 +1,5 @@
 FROM rust:latest as pd-build
 
-# TODO: Make a separate top-level folder for builds and deploys
-
 RUN apt-get update && apt-get install -y build-essential pkg-config libssl-dev clang libclang-dev
 
 RUN curl https://sh.rustup.rs -sSf | sh -s -- --no-modify-path --default-toolchain none -y
