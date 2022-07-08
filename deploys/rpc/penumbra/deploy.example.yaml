@@ -5,7 +5,7 @@ version: "2.0"
 
 services:
   penumbra:
-    image: samangan/penumbra:v1
+    image: samangan/penumbra:v4
     env:
       - PD_HOST=localhost:26658
       - ID=0
