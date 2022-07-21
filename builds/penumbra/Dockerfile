@@ -18,7 +18,7 @@ RUN cargo build --bin pd --release && \
     mkdir -p /out && \
     mv target/release/pd /out/pd
 
-FROM tendermint/tendermint:v0.35.7 as tendermint-build
+FROM tendermint/tendermint:v0.35.8 as tendermint-build
 
 
 FROM debian:bullseye-slim as runtime
