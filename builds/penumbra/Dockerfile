@@ -10,7 +10,7 @@ WORKDIR /penumbra
 
 RUN git clone https://github.com/penumbra-zone/penumbra .
 
-RUN git fetch && git checkout 020-aitne
+RUN git fetch && git checkout 021-eurydome.1
 
 RUN cargo update
 
