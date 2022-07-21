@@ -5,7 +5,7 @@ version: "2.0"
 
 services:
   penumbra:
-    image: samangan/penumbra:v1
+    image: samangan/penumbra:v6
     env:
       - S3_KEY={s3_key}
       - S3_SECRET={s3_secret}
@@ -30,7 +30,7 @@ profiles:
         memory:
           size: 4Gi
         storage:
-          size: 10Gi
+          size: 75Gi
   placement:
     akash:
       attributes:
