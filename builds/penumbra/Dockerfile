@@ -10,7 +10,7 @@ WORKDIR /penumbra
 
 RUN git clone https://github.com/penumbra-zone/penumbra .
 
-RUN git fetch && git checkout 021-eurydome.1
+RUN git fetch && git checkout 022-hegemone
 
 RUN cargo update
 
@@ -18,7 +18,7 @@ RUN cargo build --bin pd --release && \
     mkdir -p /out && \
     mv target/release/pd /out/pd
 
-FROM tendermint/tendermint:v0.35.8 as tendermint-build
+FROM tendermint/tendermint:v0.35.9 as tendermint-build
 
 
 FROM debian:bullseye-slim as runtime
