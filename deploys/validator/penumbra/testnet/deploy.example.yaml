@@ -5,7 +5,7 @@ version: "2.0"
 
 services:
   penumbra:
-    image: samangan/penumbra:v7
+    image: samangan/penumbra:v8
     env:
       - S3_KEY={s3_key}
       - S3_SECRET={s3_secret}
