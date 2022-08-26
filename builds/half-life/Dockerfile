@@ -6,10 +6,9 @@ RUN apk add git
 
 WORKDIR /code
 
-# TODO: Im just doing this rn to test this out before these PRs are merged (point this back to strangelove-ventures)
-RUN git clone https://github.com/Samangan/half-life.git .
+RUN git clone https://github.com/strangelove-ventures/half-life.git .
 
-RUN git fetch && git checkout samangan/add-alertTypeSlashingSLA
+RUN git fetch
 
 RUN go build -o bin/half-life
 
